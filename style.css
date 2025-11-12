@@ -12,6 +12,14 @@ body {
   padding: 1rem;
 }
 
+.settings {
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* centers header + slots horizontally */
+  gap: 1rem;
+  margin: 2rem 0;
+}
+
 /* Styling for section - all slots and sub headers */
 .section {
   display: flex;

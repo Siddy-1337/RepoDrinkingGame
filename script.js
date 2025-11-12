@@ -1,3 +1,4 @@
+//
 const inMatchRules = [
   "Revive a player – LA",
   "Break an item – LA",
@@ -25,17 +26,17 @@ const slots = [
   document.getElementById("slot4")
 ];
 
-// helper to pick a random rule
+// baby function to pick a random rule
 function randomRule(rules) {
   return rules[Math.floor(Math.random() * rules.length)];
 }
 
 spinButton.addEventListener("click", () => {
-  // Add spin animation
+  // spin animation
   slots.forEach(slot => slot.classList.add("spin"));
 
   setTimeout(() => {
-    // Pick 3 in-match + 1 end-match
+    // Pick 3 in-match + 1 end-match - to be updated to make dynamic later
     const selectedInMatch = [];
     while (selectedInMatch.length < 3) {
       const pick = randomRule(inMatchRules);
