@@ -18,20 +18,21 @@ const endMatchRules = [
   "Call each other by the wrong name – LA"
 ];
 
-const spinButton = document.getElementById("spin");
-const slots = [
-  document.getElementById("slot1"),
-  document.getElementById("slot2"),
-  document.getElementById("slot3"),
-  document.getElementById("slot4")
-];
+const inCountInput = document.getElementById('in_game_triggers');
+const postCountInput = document.getElementById('post_game_triggers');
+const inSlotsContainer = document.getElementById('in_slots');
+const postSlotsContainer = document.getElementById('post_slots');
+const spinButton = document.getElementById('spin');
 
 const STORAGE_KEY = 'repoDrinkingGame.latestSpin';
 
-function saveSpinToStorage(inMatchArr, endMatchStr) {
+let currentInSlots = [];
+let currentPostSlots = [];
+
+function saveSpinToStorage(inMatchArr, postMatchArr) {
   const payload = {
     inMatch: inMatchArr,
-    endMatch: endMatchStr,
+    postMatch: postMatchArr,
     ts: Date.now()
   };
   try {
@@ -44,52 +45,130 @@ function saveSpinToStorage(inMatchArr, endMatchStr) {
 function loadSavedSpin() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return;
+    if (!raw) {
+      // no saved spin — render based on inputs
+      renderSlots(parseInt(inCountInput.value || '3', 10), parseInt(postCountInput.value || '1', 10));
+      return;
+    }
     const data = JSON.parse(raw);
     if (!data) return;
+
+    // If we have saved arrays, render slots to match their lengths and populate
+    const inCount = Array.isArray(data.inMatch) ? data.inMatch.length : parseInt(inCountInput.value || '3', 10);
+    const postCount = Array.isArray(data.postMatch) ? data.postMatch.length : parseInt(postCountInput.value || '1', 10);
+
+    // update inputs to reflect saved counts
+    inCountInput.value = inCount;
+    postCountInput.value = postCount;
+
+    renderSlots(inCount, postCount);
+
     if (Array.isArray(data.inMatch)) {
-      for (let i = 0; i < 3; i++) {
-        if (data.inMatch[i]) slots[i].textContent = data.inMatch[i];
+      for (let i = 0; i < data.inMatch.length && i < currentInSlots.length; i++) {
+        currentInSlots[i].textContent = data.inMatch[i];
       }
     }
-    if (data.endMatch) slots[3].textContent = data.endMatch;
+    if (Array.isArray(data.postMatch)) {
+      for (let i = 0; i < data.postMatch.length && i < currentPostSlots.length; i++) {
+        currentPostSlots[i].textContent = data.postMatch[i];
+      }
+    }
   } catch (e) {
     console.warn('Could not load saved spin', e);
+    renderSlots(parseInt(inCountInput.value || '3', 10), parseInt(postCountInput.value || '1', 10));
   }
 }
 
-// baby function to pick a random rule
 function randomRule(rules) {
   return rules[Math.floor(Math.random() * rules.length)];
 }
 
-spinButton.addEventListener("click", () => {
-  // spin animation
-  slots.forEach(slot => slot.classList.add("spin"));
+function renderSlots(inCount, postCount) {
+  inCount = Math.max(0, parseInt(inCount || 0, 10));
+  postCount = Math.max(0, parseInt(postCount || 0, 10));
+
+  // compute a reasonable slot width based on container max width (700px) and number of slots
+  const containerMax = 700;
+  const maxSibling = Math.max(1, Math.max(inCount, postCount));
+  const calculated = Math.min(480, Math.floor((containerMax - 40) / maxSibling));
+  const widthPx = Math.max(120, calculated); // at least 120px so content isn't cramped
+
+  inSlotsContainer.innerHTML = '';
+  postSlotsContainer.innerHTML = '';
+
+  inSlotsContainer.style.setProperty('--slot-width', widthPx + 'px');
+  postSlotsContainer.style.setProperty('--slot-width', widthPx + 'px');
+
+  currentInSlots = [];
+  currentPostSlots = [];
+
+  for (let i = 0; i < inCount; i++) {
+    const d = document.createElement('div');
+    d.className = 'slot';
+    d.id = `slot-in-${i+1}`;
+    d.textContent = '—';
+    inSlotsContainer.appendChild(d);
+    currentInSlots.push(d);
+  }
+
+  for (let i = 0; i < postCount; i++) {
+    const d = document.createElement('div');
+    d.className = 'slot wide';
+    d.id = `slot-post-${i+1}`;
+    d.textContent = '—';
+    postSlotsContainer.appendChild(d);
+    currentPostSlots.push(d);
+  }
+}
+
+function pickMany(rules, count) {
+  const picks = [];
+  const allowDup = count > rules.length;
+  while (picks.length < count) {
+    const pick = randomRule(rules);
+    if (allowDup || !picks.includes(pick)) picks.push(pick);
+  }
+  return picks;
+}
+
+spinButton.addEventListener('click', () => {
+  const inCount = Math.max(0, parseInt(inCountInput.value || '0', 10));
+  const postCount = Math.max(0, parseInt(postCountInput.value || '0', 10));
+
+  // ensure slots exist for current counts
+  renderSlots(inCount, postCount);
+
+  const allSlots = [...currentInSlots, ...currentPostSlots];
+  allSlots.forEach(s => s.classList.add('spin'));
 
   setTimeout(() => {
-    // Pick 3 in-match + 1 end-match - to be updated to make dynamic later
-    const selectedInMatch = [];
-    while (selectedInMatch.length < 3) {
-      const pick = randomRule(inMatchRules);
-      if (!selectedInMatch.includes(pick)) selectedInMatch.push(pick);
+    const selectedIn = pickMany(inMatchRules, inCount);
+    const selectedPost = pickMany(endMatchRules, postCount);
+
+    for (let i = 0; i < currentInSlots.length; i++) {
+      currentInSlots[i].textContent = selectedIn[i] || '—';
+    }
+    for (let i = 0; i < currentPostSlots.length; i++) {
+      currentPostSlots[i].textContent = selectedPost[i] || '—';
     }
 
-    const selectedEnd = randomRule(endMatchRules);
+    saveSpinToStorage(selectedIn, selectedPost);
 
-    // Update the display
-    for (let i = 0; i < 3; i++) {
-      slots[i].textContent = selectedInMatch[i];
-    }
-    slots[3].textContent = selectedEnd;
-
-    // Persist the chosen rules so other clients (or reloads) can see them
-    saveSpinToStorage(selectedInMatch, selectedEnd);
-
-    // Remove spin effect
-    slots.forEach(slot => slot.classList.remove("spin"));
+    allSlots.forEach(s => s.classList.remove('spin'));
   }, 700);
 });
 
-// Load any previously saved spin on page load
+// re-render when inputs change
+inCountInput.addEventListener('change', () => {
+  const v = parseInt(inCountInput.value || '0', 10) || 0;
+  renderSlots(v, parseInt(postCountInput.value || '0', 10) || 0);
+});
+postCountInput.addEventListener('change', () => {
+  const v = parseInt(postCountInput.value || '0', 10) || 0;
+  renderSlots(parseInt(inCountInput.value || '0', 10) || 0, v);
+});
+
+// initialize
+if (!inCountInput.value) inCountInput.value = '3';
+if (!postCountInput.value) postCountInput.value = '1';
 loadSavedSpin();
