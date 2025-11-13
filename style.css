@@ -6,6 +6,12 @@ body {
   text-align: center;
 }
 
+:root {
+  /* Easily tweak these to change slot sizing across the app */
+  --slot-width: 480px; /* default slot width (overridden by JS when rendering) */
+  --slot-height: 56px; /* default slot height */
+}
+
 .container {
   max-width: 700px;
   margin: 2rem auto;
@@ -43,20 +49,22 @@ body {
   border: 3px solid #555;
   border-radius: 10px;
   width: var(--slot-width, 480px);
-  height: 80px;
+  height: var(--slot-height, 56px);
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 0.95rem;
+  font-size: 1rem;
+  padding: 0 12px;
+  box-sizing: border-box;
   transition: all 0.3s ease;
   box-shadow: 0 0 10px #000;
 }
 
 /* the animation affect for spinning - to updated with rolling colours or variable colours*/
 .slot.spin {
-  background: #fffb00;
+  background: #8d83e6;
   transform: scale(1.05);
-  border-color: #eeff00;
+  border-color: #ffffff;
 }
 
 /* Spin button */

@@ -87,11 +87,13 @@ function renderSlots(inCount, postCount) {
   inCount = Math.max(0, parseInt(inCount || 0, 10));
   postCount = Math.max(0, parseInt(postCount || 0, 10));
 
-  // compute a reasonable slot width based on container max width (700px) and number of slots
-  const containerMax = 700;
-  const maxSibling = Math.max(1, Math.max(inCount, postCount));
-  const calculated = Math.min(480, Math.floor((containerMax - 40) / maxSibling));
-  const widthPx = Math.max(120, calculated); // at least 120px so content isn't cramped
+  // compute a reasonable slot width based on the current container width
+  const containerEl = document.querySelector('.container');
+  const containerMax = containerEl ? containerEl.clientWidth : 700;
+  // Since slots are stacked vertically, width doesn't need to shrink with count.
+  // Use container width minus some padding, constrain to a reasonable range.
+  const calculated = Math.floor(containerMax - 40);
+  const widthPx = Math.max(200, Math.min(640, calculated)); // keep widths readable
 
   inSlotsContainer.innerHTML = '';
   postSlotsContainer.innerHTML = '';
