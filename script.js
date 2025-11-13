@@ -26,6 +26,38 @@ const slots = [
   document.getElementById("slot4")
 ];
 
+const STORAGE_KEY = 'repoDrinkingGame.latestSpin';
+
+function saveSpinToStorage(inMatchArr, endMatchStr) {
+  const payload = {
+    inMatch: inMatchArr,
+    endMatch: endMatchStr,
+    ts: Date.now()
+  };
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+  } catch (e) {
+    console.warn('Could not save spin to localStorage', e);
+  }
+}
+
+function loadSavedSpin() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return;
+    const data = JSON.parse(raw);
+    if (!data) return;
+    if (Array.isArray(data.inMatch)) {
+      for (let i = 0; i < 3; i++) {
+        if (data.inMatch[i]) slots[i].textContent = data.inMatch[i];
+      }
+    }
+    if (data.endMatch) slots[3].textContent = data.endMatch;
+  } catch (e) {
+    console.warn('Could not load saved spin', e);
+  }
+}
+
 // baby function to pick a random rule
 function randomRule(rules) {
   return rules[Math.floor(Math.random() * rules.length)];
@@ -51,7 +83,13 @@ spinButton.addEventListener("click", () => {
     }
     slots[3].textContent = selectedEnd;
 
+    // Persist the chosen rules so other clients (or reloads) can see them
+    saveSpinToStorage(selectedInMatch, selectedEnd);
+
     // Remove spin effect
     slots.forEach(slot => slot.classList.remove("spin"));
   }, 700);
 });
+
+// Load any previously saved spin on page load
+loadSavedSpin();
