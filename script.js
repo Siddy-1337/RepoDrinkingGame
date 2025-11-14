@@ -1,8 +1,6 @@
-// --- IMPORT FIREBASE MODULES ---
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
-import { getDatabase, ref, onValue, set } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-database.js";
+import { getDatabase, ref, onValue, set, update } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-database.js";
 
-// --- FIREBASE CONFIG ---
 const firebaseConfig = {
   apiKey: "AIzaSyAcX7NYcBH4rVtcP3V9vRt2Aaudupxew_E",
   authDomain: "repogame-9cfd8.firebaseapp.com",
@@ -13,12 +11,10 @@ const firebaseConfig = {
   databaseURL: "https://repogame-9cfd8-default-rtdb.europe-west1.firebasedatabase.app"
 };
 
-// --- INITIALIZE FIREBASE ---
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
-const gameRef = ref(db, "currentSpin"); // GLOBAL shared game state
+const gameRef = ref(db, "currentSpin");
 
-// Rules (to be updated)
 const inMatchRules = [
   "Revive a player – LA",
   "Break an item – LA",
@@ -44,7 +40,6 @@ const endMatchRules = [
   "For each item (knowingly) left behind – HA"
 ];
 
-// element references (counts are shown in divs now)
 const inCountInput = document.getElementById("in_game_triggers");
 const postCountInput = document.getElementById("post_game_triggers");
 const decreaseInBtn = document.getElementById("decrease_in_game_triggers");
@@ -58,11 +53,9 @@ const spinButton = document.getElementById("spin");
 let currentInSlots = [];
 let currentPostSlots = [];
 
-// render slot function
 function renderSlots(inCount, postCount) {
   inSlotsContainer.innerHTML = "";
   postSlotsContainer.innerHTML = "";
-
   currentInSlots = [];
   currentPostSlots = [];
 
@@ -89,7 +82,6 @@ function renderSlots(inCount, postCount) {
   }
 }
 
-// helper functions
 function randomRule(rules) {
   return rules[Math.floor(Math.random() * rules.length)];
 }
@@ -104,13 +96,48 @@ function pickMany(rules, count) {
   return picks;
 }
 
+function getCountFromDiv(el) {
+  const val = parseInt(el.textContent || "0", 10) || 0;
+  return Math.min(10, Math.max(1, val));
+}
+
+function setCountOnDiv(el, v) {
+  const v2 = Math.min(10, Math.max(1, v));
+  el.textContent = String(v2);
+}
+
+function updateButtonsState() {
+  const inCount = getCountFromDiv(inCountInput);
+  const postCount = getCountFromDiv(postCountInput);
+  decreaseInBtn.disabled = inCount <= 1;
+  increaseInBtn.disabled = inCount >= 10;
+  decreasePostBtn.disabled = postCount <= 1;
+  increasePostBtn.disabled = postCount >= 10;
+}
+
+function changeCount(divEl, delta) {
+  const newVal = Math.min(10, Math.max(1, getCountFromDiv(divEl) + delta));
+  setCountOnDiv(divEl, newVal);
+  renderSlots(getCountFromDiv(inCountInput), getCountFromDiv(postCountInput));
+  updateButtonsState();
+  update(gameRef, {
+    inCount: getCountFromDiv(inCountInput),
+    postCount: getCountFromDiv(postCountInput),
+    timestamp: Date.now()
+  });
+}
+
+decreaseInBtn.addEventListener('click', () => changeCount(inCountInput, -1));
+increaseInBtn.addEventListener('click', () => changeCount(inCountInput, 1));
+decreasePostBtn.addEventListener('click', () => changeCount(postCountInput, -1));
+increasePostBtn.addEventListener('click', () => changeCount(postCountInput, 1));
+
 const SPIN_DURATION = 700;
 const REVEAL_DELAY = 400;
 
-// spin button
 spinButton.addEventListener("click", async () => {
-  const inCount = Math.max(0, parseInt(inCountInput.textContent || "0", 10));
-  const postCount = Math.max(0, parseInt(postCountInput.textContent || "0", 10));
+  const inCount = getCountFromDiv(inCountInput);
+  const postCount = getCountFromDiv(postCountInput);
 
   renderSlots(inCount, postCount);
 
@@ -132,7 +159,6 @@ spinButton.addEventListener("click", async () => {
     await new Promise(r => setTimeout(r, REVEAL_DELAY));
   }
 
-  // sync to firebase
   await set(gameRef, {
     inMatch: selectedIn,
     postMatch: selectedPost,
@@ -143,7 +169,6 @@ spinButton.addEventListener("click", async () => {
 
   spinButton.disabled = false;
 });
-
 
 onValue(gameRef, snapshot => {
   const data = snapshot.val();
@@ -157,52 +182,20 @@ onValue(gameRef, snapshot => {
 
   renderSlots(inCount, postCount);
 
-  data.inMatch?.forEach((txt, i) => {
-    currentInSlots[i].textContent = txt;
-  });
+  if (data.inMatch) {
+    data.inMatch.forEach((txt, i) => {
+      if (currentInSlots[i]) currentInSlots[i].textContent = txt;
+    });
+  }
 
-  data.postMatch?.forEach((txt, i) => {
-    currentPostSlots[i].textContent = txt;
-  });
+  if (data.postMatch) {
+    data.postMatch.forEach((txt, i) => {
+      if (currentPostSlots[i]) currentPostSlots[i].textContent = txt;
+    });
+  }
 
   updateButtonsState();
 });
 
-
-renderSlots(3, 1);
-
-function getCountFromDiv(el) {
-  const val = parseInt(el.textContent || "0", 10) || 0;
-  return Math.min(10, Math.max(1, val));
-}
-function setCountOnDiv(el, v) {
-  const v2 = Math.min(10, Math.max(1, v));
-  el.textContent = String(v2);
-}
-
-function changeCount(divEl, delta) {
-  const newVal = Math.min(10, Math.max(1, getCountFromDiv(divEl) + delta));
-  setCountOnDiv(divEl, newVal);
-  renderSlots(getCountFromDiv(inCountInput), getCountFromDiv(postCountInput));
-  updateButtonsState();
-}
-
-// wire up +/- buttons if present
-if (decreaseInBtn) decreaseInBtn.addEventListener('click', () => changeCount(inCountInput, -1));
-if (increaseInBtn) increaseInBtn.addEventListener('click', () => changeCount(inCountInput, 1));
-if (decreasePostBtn) decreasePostBtn.addEventListener('click', () => changeCount(postCountInput, -1));
-if (increasePostBtn) increasePostBtn.addEventListener('click', () => changeCount(postCountInput, 1));
-
 renderSlots(getCountFromDiv(inCountInput), getCountFromDiv(postCountInput));
-
-function updateButtonsState() {
-  if (!decreaseInBtn || !increaseInBtn || !decreasePostBtn || !increasePostBtn) return;
-  const inCount = getCountFromDiv(inCountInput);
-  const postCount = getCountFromDiv(postCountInput);
-  decreaseInBtn.disabled = inCount <= 1;
-  increaseInBtn.disabled = inCount >= 10;
-  decreasePostBtn.disabled = postCount <= 1;
-  increasePostBtn.disabled = postCount >= 10;
-}
-
 updateButtonsState();
