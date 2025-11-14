@@ -22,20 +22,26 @@ const gameRef = ref(db, "currentSpin"); // GLOBAL shared game state
 const inMatchRules = [
   "Revive a player – LA",
   "Break an item – LA",
+  "Damage an item – WA",
   "Hit a player – LA",
   "Die – HA",
+  "Say something mean – LA",
   "Kill a player – HA",
   "Tip over animal box – HA",
-  "Break an orb – HA"
+  "Break an orb – HA",
+  "Call each other by the wrong name – LA",
+  "Light items can only be carried by one person - HA",
+  "Knock a player with the cart - LA",
+  "Any explosion - HA",
+  "Slide - LA",
+  "Jump - LA"
 ];
 
 const endMatchRules = [
   "Complete a level without killing a monster – LA",
   "Complete a level while having been revived – HA",
   "Complete a level without everyone alive – HA",
-  "Loser of Losers – HA",
-  "Winner of Losers – LA",
-  "Call each other by the wrong name – LA"
+  "For each item (knowingly) left behind – HA"
 ];
 
 // element references
