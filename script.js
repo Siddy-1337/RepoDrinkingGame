@@ -18,7 +18,7 @@ const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 const gameRef = ref(db, "currentSpin"); // GLOBAL shared game state
 
-// --- RULES ---
+// Rules (to be updated)
 const inMatchRules = [
   "Revive a player – LA",
   "Break an item – LA",
@@ -38,7 +38,7 @@ const endMatchRules = [
   "Call each other by the wrong name – LA"
 ];
 
-// --- DOM ELEMENTS ---
+// element references
 const inCountInput = document.getElementById("in_game_triggers");
 const postCountInput = document.getElementById("post_game_triggers");
 const inSlotsContainer = document.getElementById("in_slots");
@@ -48,7 +48,7 @@ const spinButton = document.getElementById("spin");
 let currentInSlots = [];
 let currentPostSlots = [];
 
-// --- RENDER SLOTS ---
+// render slot function
 function renderSlots(inCount, postCount) {
   inSlotsContainer.innerHTML = "";
   postSlotsContainer.innerHTML = "";
@@ -79,7 +79,7 @@ function renderSlots(inCount, postCount) {
   }
 }
 
-// --- RANDOM PICK HELPERS ---
+// helper functions
 function randomRule(rules) {
   return rules[Math.floor(Math.random() * rules.length)];
 }
@@ -97,7 +97,7 @@ function pickMany(rules, count) {
 const SPIN_DURATION = 700;
 const REVEAL_DELAY = 400;
 
-// --- SPIN HANDLER ---
+// spin button
 spinButton.addEventListener("click", async () => {
   const inCount = parseInt(inCountInput.value);
   const postCount = parseInt(postCountInput.value);
@@ -122,7 +122,7 @@ spinButton.addEventListener("click", async () => {
     await new Promise(r => setTimeout(r, REVEAL_DELAY));
   }
 
-  // SAVE TO FIREBASE (GLOBAL SYNC)
+  // sync to firebase
   await set(gameRef, {
     inMatch: selectedIn,
     postMatch: selectedPost,
@@ -134,12 +134,12 @@ spinButton.addEventListener("click", async () => {
   spinButton.disabled = false;
 });
 
-// --- REAL-TIME SYNC LISTENER ---
+
 onValue(gameRef, snapshot => {
   const data = snapshot.val();
   if (!data) return;
 
-  // update UI to match synced data
+
   inCountInput.value = data.inCount;
   postCountInput.value = data.postCount;
 
@@ -154,5 +154,5 @@ onValue(gameRef, snapshot => {
   });
 });
 
-// --- INITIAL RENDER ---
+
 renderSlots(3, 1);

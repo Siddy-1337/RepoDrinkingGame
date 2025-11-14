@@ -7,8 +7,7 @@ body {
 }
 
 :root {
-  /* Easily tweak these to change slot sizing across the app */
-  --slot-width: 480px; /* default slot width (overridden by JS when rendering) */
+  --slot-width: 480px; /* default slot width (overriden by JS)*/
   --slot-height: 56px; /* default slot height */
 }
 
@@ -35,7 +34,7 @@ body {
   margin: 2rem 0;
 }
 
-/* Style for slot container */
+/* Style for slot containers */
 .slots {
   display: flex;
   flex-direction: column; /* stack slots vertically */
