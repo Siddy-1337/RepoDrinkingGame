@@ -9,27 +9,33 @@
 <body>
   <div class="container">
     <h1>REPO Drinking Game</h1>
+
     <section class="settings">
-      <label for="in_game_triggers">In Game Triggers: <input type="number" inputmode="numeric" id="in_game_triggers" name="in_game_triggers" min="0" step="1" value="3"> </label>
-      <label for="post_game_triggers">Post Game Triggers: <input type="number" inputmode="numeric" id="post_game_triggers" name="post_game_triggers" min="0" step="1" value="1"> </label>
+      <label>
+        In Game Triggers:
+        <input type="number" id="in_game_triggers" min="0" step="1" value="3">
+      </label>
+
+      <label>
+        Post Game Triggers:
+        <input type="number" id="post_game_triggers" min="0" step="1" value="1">
+      </label>
     </section>
+
     <section class="section">
       <h2>In-Match Triggers</h2>
-      <div class="slots" id="in_slots">
-        <!-- Slots will be rendered here by script.js -->
-      </div>
+      <div class="slots" id="in_slots"></div>
     </section>
 
     <section class="section">
       <h2>Post-Match Trigger</h2>
-      <div class="slots" id="post_slots">
-        <!-- Slots will be rendered here by script.js -->
-      </div>
+      <div class="slots" id="post_slots"></div>
     </section>
 
     <button id="spin">Spin</button>
   </div>
 
-  <script src="script.js"></script>
+  <!-- Firebase + App JS -->
+  <script type="module" src="script.js"></script>
 </body>
 </html>
