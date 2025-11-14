@@ -44,9 +44,13 @@ const endMatchRules = [
   "For each item (knowingly) left behind – HA"
 ];
 
-// element references
+// element references (counts are shown in divs now)
 const inCountInput = document.getElementById("in_game_triggers");
 const postCountInput = document.getElementById("post_game_triggers");
+const decreaseInBtn = document.getElementById("decrease_in_game_triggers");
+const increaseInBtn = document.getElementById("increase_in_game_triggers");
+const decreasePostBtn = document.getElementById("decrease_post_game_triggers");
+const increasePostBtn = document.getElementById("increase_post_game_triggers");
 const inSlotsContainer = document.getElementById("in_slots");
 const postSlotsContainer = document.getElementById("post_slots");
 const spinButton = document.getElementById("spin");
@@ -63,7 +67,7 @@ function renderSlots(inCount, postCount) {
   currentPostSlots = [];
 
   const containerWidth = document.querySelector(".container").clientWidth;
-  const slotWidth = Math.max(200, Math.min(640, containerWidth - 40));
+  const slotWidth = Math.max(200, Math.min(500, containerWidth - 40));
 
   inSlotsContainer.style.setProperty("--slot-width", `${slotWidth}px`);
   postSlotsContainer.style.setProperty("--slot-width", `${slotWidth}px`);
@@ -105,8 +109,8 @@ const REVEAL_DELAY = 400;
 
 // spin button
 spinButton.addEventListener("click", async () => {
-  const inCount = parseInt(inCountInput.value);
-  const postCount = parseInt(postCountInput.value);
+  const inCount = Math.max(0, parseInt(inCountInput.textContent || "0", 10));
+  const postCount = Math.max(0, parseInt(postCountInput.textContent || "0", 10));
 
   renderSlots(inCount, postCount);
 
@@ -145,11 +149,13 @@ onValue(gameRef, snapshot => {
   const data = snapshot.val();
   if (!data) return;
 
+  const inCount = Math.min(10, Math.max(1, parseInt(data.inCount || 1, 10)));
+  const postCount = Math.min(10, Math.max(1, parseInt(data.postCount || 1, 10)));
 
-  inCountInput.value = data.inCount;
-  postCountInput.value = data.postCount;
+  inCountInput.textContent = String(inCount);
+  postCountInput.textContent = String(postCount);
 
-  renderSlots(data.inCount, data.postCount);
+  renderSlots(inCount, postCount);
 
   data.inMatch?.forEach((txt, i) => {
     currentInSlots[i].textContent = txt;
@@ -158,7 +164,45 @@ onValue(gameRef, snapshot => {
   data.postMatch?.forEach((txt, i) => {
     currentPostSlots[i].textContent = txt;
   });
+
+  updateButtonsState();
 });
 
 
 renderSlots(3, 1);
+
+function getCountFromDiv(el) {
+  const val = parseInt(el.textContent || "0", 10) || 0;
+  return Math.min(10, Math.max(1, val));
+}
+function setCountOnDiv(el, v) {
+  const v2 = Math.min(10, Math.max(1, v));
+  el.textContent = String(v2);
+}
+
+function changeCount(divEl, delta) {
+  const newVal = Math.min(10, Math.max(1, getCountFromDiv(divEl) + delta));
+  setCountOnDiv(divEl, newVal);
+  renderSlots(getCountFromDiv(inCountInput), getCountFromDiv(postCountInput));
+  updateButtonsState();
+}
+
+// wire up +/- buttons if present
+if (decreaseInBtn) decreaseInBtn.addEventListener('click', () => changeCount(inCountInput, -1));
+if (increaseInBtn) increaseInBtn.addEventListener('click', () => changeCount(inCountInput, 1));
+if (decreasePostBtn) decreasePostBtn.addEventListener('click', () => changeCount(postCountInput, -1));
+if (increasePostBtn) increasePostBtn.addEventListener('click', () => changeCount(postCountInput, 1));
+
+renderSlots(getCountFromDiv(inCountInput), getCountFromDiv(postCountInput));
+
+function updateButtonsState() {
+  if (!decreaseInBtn || !increaseInBtn || !decreasePostBtn || !increasePostBtn) return;
+  const inCount = getCountFromDiv(inCountInput);
+  const postCount = getCountFromDiv(postCountInput);
+  decreaseInBtn.disabled = inCount <= 1;
+  increaseInBtn.disabled = inCount >= 10;
+  decreasePostBtn.disabled = postCount <= 1;
+  increasePostBtn.disabled = postCount >= 10;
+}
+
+updateButtonsState();

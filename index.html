@@ -11,14 +11,18 @@
     <h1>REPO Drinking Game</h1>
 
     <section class="settings">
-      <label>
+      <label class="settings-label">
         In Game Triggers:
-        <input type="number" id="in_game_triggers" min="0" step="1" value="3">
+        <button id="decrease_in_game_triggers">-</button>
+        <div id="in_game_triggers">2</div>
+        <button id="increase_in_game_triggers">+</button>
       </label>
 
-      <label>
+      <label class="settings-label">
         Post Game Triggers:
-        <input type="number" id="post_game_triggers" min="0" step="1" value="1">
+        <button id="decrease_post_game_triggers">-</button>
+        <div id="post_game_triggers">2</div>
+        <button id="increase_post_game_triggers">+</button>
       </label>
     </section>
 
