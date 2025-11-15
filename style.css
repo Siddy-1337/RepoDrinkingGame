@@ -1,87 +1,188 @@
-
-body {
-  font-family: "Arial";
-  background: grey;
-  color: white;
-  text-align: center;
+:root {
+  --bg-color: #faf7f5;
+  --container-bg: #ffffff;
+  --container-shadow: rgba(0,0,0,0.05);
+  --title-color: #3c3a3a;
+  --subtitle-color: #555;
+  --button-bg: #f3f0ee;
+  --button-hover-bg: #ece7e4;
+  --button-border: #d7d3d0;
+  --button-color: #444;
+  --slot-bg: #fafafa;
+  --slot-border: #ebe7e4;
+  --slot-spin-bg: #f2edf9;
+  --slot-spin-border: #d8c9f0;
+  --slot-shadow: rgba(180,150,240,0.2);
+  --spin-button-bg: linear-gradient(135deg, #dceeff, #e9f5ff);
+  --spin-button-border: #d1e4f5;
+  --spin-button-color: #335;
+  --spin-button-shadow: rgba(100,150,255,0.15);
+  --spin-button-shadow-hover: rgba(100,150,255,0.25);
 }
 
-:root {
-  --slot-width: 480px; /* default slot width (overriden by JS)*/
-  --slot-height: 56px; /* default slot height */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Montserrat", "Arial", sans-serif;
+  background: var(--bg-color);
+  color: var(--title-color);
+  text-align: center;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start; /* align to top but allow padding */
+  padding: 4rem 2rem; /* more breathing room */
 }
 
 .container {
-  max-width: 700px;
-  margin: 2rem auto;
-  padding: 1rem;
+  width: 100%;
+  max-width: 750px;
+  padding: 2.5rem;
+  border-radius: 18px;
+  background: var(--container-bg);
+  box-shadow:
+    0 2px 6px var(--container-shadow),
+    0 8px 20px var(--container-shadow);
+  border: 1px solid #ebe7e4;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-height: fit-content; /* prevents stretching */
+}
+
+
+h1 {
+  font-size: 2.3rem;
+  margin-bottom: 1.5rem;
+  font-weight: 700;
+  color: var(--title-color);
+}
+
+.section h2 {
+  font-size: 1.4rem;
+  color: var(--subtitle-color);
+  margin-bottom: 0.8rem;
 }
 
 .settings {
+  margin: 2rem 0;
   display: flex;
   flex-direction: column;
-  align-items: center; /* centers header + slots horizontally */
   gap: 1rem;
-  margin: 2rem 0;
+  align-items: center;
 }
 
 .settings-label {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  justify-content: center;
+  gap: 0.8rem;
   font-size: 1.2rem;
+  color: var(--subtitle-color);
 }
 
-/* Styling for section - all slots and sub headers */
-.section {
-  display: flex;
-  flex-direction: column;
-  align-items: center; /* centers header + slots horizontally */
-  gap: 1rem;
-  margin: 2rem 0;
+.settings-label button {
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  border: 1px solid var(--button-border);
+  background: var(--button-bg);
+  color: var(--button-color);
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: 0.2s;
 }
 
-/* Style for slot containers */
+.settings-label button:hover:not(:disabled) {
+  background: var(--button-hover-bg);
+}
+
+.settings-label button:disabled {
+  opacity: 0.4;
+}
+
+.settings-label div {
+  width: 44px;
+  font-size: 1.25rem;
+  font-weight: bold;
+  background: #f8f6f4;
+  padding: 6px 0;
+  border-radius: 6px;
+  border: 1px solid #e5e2df;
+}
+
 .slots {
   display: flex;
-  flex-direction: column; /* stack slots vertically */
-  gap: 1rem;             /* space between slots */
-  align-items: center;    /* center each slot horizontally */
+  flex-direction: column;
+  gap: 1rem;
+  align-items: center;
+  width: 100%;
+  padding-bottom: 1.5rem; /* adds space after the last slot */
 }
 
-/* Individual slot styles */
+
 .slot {
-  background: #222;
-  border: 3px solid #555;
-  border-radius: 10px;
   width: var(--slot-width, 480px);
   height: var(--slot-height, 56px);
+  background: var(--slot-bg);
+  border-radius: 12px;
+  border: 2px solid var(--slot-border);
   display: flex;
   justify-content: center;
   align-items: center;
   font-size: 1rem;
-  padding: 0 12px;
-  box-sizing: border-box;
-  transition: all 0.3s ease;
-  box-shadow: 0 0 10px #000;
+  padding: 0 14px;
+  box-shadow: 0 4px 10px var(--slot-shadow), 0 8px 18px var(--slot-shadow);
+  transition: transform 0.4s ease, background 0.4s ease, border-color 0.4s ease, opacity 0.35s ease;
+  will-change: transform, opacity;
+  opacity: 1;
 }
 
-/* the animation affect for spinning - to updated with rolling colours or variable colours*/
 .slot.spin {
-  background: #8d83e6;
+  background: var(--slot-spin-bg);
+  border-color: var(--slot-spin-border);
   transform: scale(1.05);
-  border-color: #ffffff;
 }
 
-/* Spin button */
-button#spin {
-  padding: 1rem 2rem;
-  border: none;
-  border-radius: 8px;
+.slot.reveal {
+  opacity: 1;
+}
+
+.slot.hidden {
+  opacity: 0;
+}
+
+#spin {
+  margin-top: 1.5rem;
+  padding: 1rem 2.5rem;
+  font-size: 1.3rem;
+  font-weight: 600;
+  border-radius: 12px;
+  border: 1px solid var(--spin-button-border);
+  background: var(--spin-button-bg);
+  color: var(--spin-button-color);
   cursor: pointer;
-  transition: background 0.3s;
+  transition: transform 0.25s, box-shadow 0.25s;
+  box-shadow: 0 3px 8px var(--spin-button-shadow), 0 8px 16px var(--spin-button-shadow);
 }
 
-button#spin:hover {
-  background: #f06595;
+#spin:hover {
+  transform: scale(1.05);
+  box-shadow: 0 5px 12px var(--spin-button-shadow-hover), 0 10px 20px var(--spin-button-shadow-hover);
+}
+
+#spin:active {
+  transform: scale(0.97);
+}
+
+#spin:disabled {
+  opacity: 0.6;
+  transform: none;
+  cursor: default;
+  box-shadow: none;
 }
