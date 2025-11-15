@@ -137,7 +137,7 @@ h1 {
   align-items: center;
   font-size: 1rem;
   padding: 0 14px;
-  box-shadow: 0 4px 10px var(--slot-shadow), 0 8px 18px var(--slot-shadow);
+  box-shadow: 0 1px 2px var(--slot-shadow), 0 2px 5px var(--slot-shadow);
   transition: transform 0.4s ease, background 0.4s ease, border-color 0.4s ease, opacity 0.35s ease;
   will-change: transform, opacity;
   opacity: 1;
