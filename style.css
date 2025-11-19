@@ -1,24 +1,25 @@
 :root {
-  --bg-color: #faf7f5;
-  --container-bg: linear-gradient(135deg, #ffffff, #f5f0ff);
-  --container-shadow: rgba(0,0,0,0.08);
-  --title-color: #3c3a3a;
-  --subtitle-color: #555;
-  --button-bg: #f7e9ff;
-  --button-hover-bg: #ecd7ff;
-  --button-border: #d7c0ff;
-  --button-color: #444;
-  --slot-bg: #fff1ff;
-  --slot-border: #e0c8ff;
-  --slot-spin-bg: #e9d7ff;
-  --slot-spin-border: #d8b7ff;
-  --slot-shadow: rgba(180,150,240,0.25);
-  --spin-button-bg: linear-gradient(135deg, #dceeff, #e9f5ff);
-  --spin-button-border: #d1e4f5;
-  --spin-button-color: #335;
-  --spin-button-shadow: rgba(100,150,255,0.25);
-  --spin-button-shadow-hover: rgba(100,150,255,0.35);
+  --bg-color: #fffaf5;
+  --container-bg: linear-gradient(135deg, #ffffff, #fef5e8);
+  --container-shadow: rgba(255, 180, 120, 0.15);
+  --title-color: #4a4a48;
+  --subtitle-color: #667066;
+  --button-bg: #d0fff0;
+  --button-hover-bg: #aaf3df;
+  --button-border: #7ee6c8;
+  --button-color: #2a3d34;
+  --slot-bg: #e6fff7;
+  --slot-border: #aef0dc;
+  --slot-spin-bg: #c0ffe6;
+  --slot-spin-border: #7ee6c8;
+  --slot-shadow: rgba(100, 200, 180, 0.3);
+  --spin-button-bg: linear-gradient(135deg, #aaf3df, #c0ffe6);
+  --spin-button-border: #7ee6c8;
+  --spin-button-color: #1a3d2d;
+  --spin-button-shadow: rgba(100, 200, 180, 0.35);
+  --spin-button-shadow-hover: rgba(100, 200, 180, 0.5);
 }
+
 
 body {
   font-family: "Montserrat", "Arial", sans-serif;
