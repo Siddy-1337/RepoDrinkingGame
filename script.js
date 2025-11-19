@@ -1,6 +1,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
 import { getDatabase, ref, onValue, set, update } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-database.js";
 
+// Firebase config
 const firebaseConfig = {
   apiKey: "AIzaSyAcX7NYcBH4rVtcP3V9vRt2Aaudupxew_E",
   authDomain: "repogame-9cfd8.firebaseapp.com",
@@ -15,36 +16,38 @@ const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 const gameRef = ref(db, "currentSpin");
 
+// Rules
 const inMatchRules = [
-"Revive a dead player - LA",
-"Break an item - LA",
-"Damage an item - LA",
-"Hit a player - LA",
-"Die - HA",
-"Say something mean - LA",
-"Kill a player - HA",
-"Tip over an animal box - HA",
-"Break an orb - HA",
-"Call each other the wrong name - LA",
-"Light items can only be carried by one person - HA",
-"Knock a player with the cart - LA",
-"Cause an explosion - HA",
-"Slide - LA",
-"Jump - LA",
-"Swear - LA",
-"Receive fall damage - LA",
-"Hurt a player - LA",
-"Call chat 'chat' - LA",
+  "Revive a dead player - LA",
+  "Break an item - LA",
+  "Damage an item - LA",
+  "Hit a player - LA",
+  "Die - HA",
+  "Say something mean - LA",
+  "Kill a player - HA",
+  "Tip over an animal box - HA",
+  "Break an orb - HA",
+  "Call each other the wrong name - LA",
+  "Light items can only be carried by one person - HA",
+  "Knock a player with the cart - LA",
+  "Cause an explosion - HA",
+  "Slide - LA",
+  "Jump - LA",
+  "Swear - LA",
+  "Receive fall damage - LA",
+  "Hurt a player - LA",
+  "Call chat 'chat' - LA",
 ];
 
 const endMatchRules = [
-"Complete a level without killing a monster - LA",
-"Complete a level while having been revived  - HA",
-"Complete a level having revived a player - HA",
-"Complete a level without everyone alive - HA",
-"For each item (knowingly) left behind - HA",
+  "Complete a level without killing a monster - LA",
+  "Complete a level while having been revived - HA",
+  "Complete a level having revived a player - HA",
+  "Complete a level without everyone alive - HA",
+  "For each item (knowingly) left behind - HA",
 ];
 
+// DOM Elements
 const inCountInput = document.getElementById("in_game_triggers");
 const postCountInput = document.getElementById("post_game_triggers");
 const decreaseInBtn = document.getElementById("decrease_in_game_triggers");
@@ -54,53 +57,13 @@ const increasePostBtn = document.getElementById("increase_post_game_triggers");
 const inSlotsContainer = document.getElementById("in_slots");
 const postSlotsContainer = document.getElementById("post_slots");
 const spinButton = document.getElementById("spin");
+const themeToggle = document.getElementById("theme_toggle");
+const layoutToggle = document.getElementById("layout_toggle");
 
 let currentInSlots = [];
 let currentPostSlots = [];
 
-function renderSlots(inCount, postCount) {
-  inSlotsContainer.innerHTML = "";
-  postSlotsContainer.innerHTML = "";
-  currentInSlots = [];
-  currentPostSlots = [];
-
-  const containerWidth = document.querySelector(".container").clientWidth;
-  const slotWidth = Math.max(200, Math.min(500, containerWidth - 40));
-
-  inSlotsContainer.style.setProperty("--slot-width", `${slotWidth}px`);
-  postSlotsContainer.style.setProperty("--slot-width", `${slotWidth}px`);
-
-  for (let i = 0; i < inCount; i++) {
-    const el = document.createElement("div");
-    el.className = "slot";
-    el.textContent = "—";
-    inSlotsContainer.appendChild(el);
-    currentInSlots.push(el);
-  }
-
-  for (let i = 0; i < postCount; i++) {
-    const el = document.createElement("div");
-    el.className = "slot";
-    el.textContent = "—";
-    postSlotsContainer.appendChild(el);
-    currentPostSlots.push(el);
-  }
-}
-
-function randomRule(rules) {
-  return rules[Math.floor(Math.random() * rules.length)];
-}
-
-function pickMany(rules, count) {
-  const picks = [];
-  const allowDup = count > rules.length;
-  while (picks.length < count) {
-    const pick = randomRule(rules);
-    if (allowDup || !picks.includes(pick)) picks.push(pick);
-  }
-  return picks;
-}
-
+// Helpers
 function getCountFromDiv(el) {
   const val = parseInt(el.textContent || "0", 10) || 0;
   return Math.min(10, Math.max(1, val));
@@ -120,6 +83,62 @@ function updateButtonsState() {
   increasePostBtn.disabled = postCount >= 10;
 }
 
+function randomRule(rules) {
+  return rules[Math.floor(Math.random() * rules.length)];
+}
+
+function pickMany(rules, count) {
+  const picks = [];
+  const allowDup = count > rules.length;
+  while (picks.length < count) {
+    const pick = randomRule(rules);
+    if (allowDup || !picks.includes(pick)) picks.push(pick);
+  }
+  return picks;
+}
+
+// Render Slots
+function renderSlots(inCount, postCount) {
+  inSlotsContainer.innerHTML = "";
+  postSlotsContainer.innerHTML = "";
+  currentInSlots = [];
+  currentPostSlots = [];
+
+  for (let i = 0; i < inCount; i++) {
+    const el = document.createElement("div");
+    el.className = "slot";
+    el.textContent = "—";
+    inSlotsContainer.appendChild(el);
+    currentInSlots.push(el);
+  }
+
+  for (let i = 0; i < postCount; i++) {
+    const el = document.createElement("div");
+    el.className = "slot";
+    el.textContent = "—";
+    postSlotsContainer.appendChild(el);
+    currentPostSlots.push(el);
+  }
+
+  updateSlotWidths();
+}
+
+// Update slot widths according to layout
+function updateSlotWidths() {
+  const container = document.querySelector(".container");
+  const isMinimal = document.body.classList.contains("layout-minimal");
+  const containerWidth = container.clientWidth;
+
+  const slotWidth = isMinimal
+    ? Math.min(320, containerWidth - 20)
+    : Math.max(200, Math.min(500, containerWidth - 40));
+
+  [...currentInSlots, ...currentPostSlots].forEach(slot => {
+    slot.style.width = `${slotWidth}px`;
+  });
+}
+
+// Count buttons
 function changeCount(divEl, delta) {
   const newVal = Math.min(10, Math.max(1, getCountFromDiv(divEl) + delta));
   setCountOnDiv(divEl, newVal);
@@ -137,9 +156,7 @@ increaseInBtn.addEventListener('click', () => changeCount(inCountInput, 1));
 decreasePostBtn.addEventListener('click', () => changeCount(postCountInput, -1));
 increasePostBtn.addEventListener('click', () => changeCount(postCountInput, 1));
 
-const SPIN_DURATION = 700;
-const REVEAL_DELAY = 400;
-
+// Spin
 spinButton.addEventListener("click", async () => {
   const inCount = getCountFromDiv(inCountInput);
   const postCount = getCountFromDiv(postCountInput);
@@ -154,14 +171,14 @@ spinButton.addEventListener("click", async () => {
   const allSlots = [...currentInSlots, ...currentPostSlots];
   allSlots.forEach(s => s.classList.add("spin"));
 
-  await new Promise(r => setTimeout(r, SPIN_DURATION));
+  await new Promise(r => setTimeout(r, 700));
 
   for (let i = 0; i < allSlots.length; i++) {
     const el = allSlots[i];
     const txt = i < selectedIn.length ? selectedIn[i] : selectedPost[i - selectedIn.length];
     el.classList.remove("spin");
     el.textContent = txt;
-    await new Promise(r => setTimeout(r, REVEAL_DELAY));
+    await new Promise(r => setTimeout(r, 400));
   }
 
   await set(gameRef, {
@@ -175,6 +192,7 @@ spinButton.addEventListener("click", async () => {
   spinButton.disabled = false;
 });
 
+// Firebase sync
 onValue(gameRef, snapshot => {
   const data = snapshot.val();
   if (!data) return;
@@ -200,6 +218,18 @@ onValue(gameRef, snapshot => {
   }
 
   updateButtonsState();
+});
+
+themeToggle.addEventListener("click", () => {
+  document.body.classList.toggle("theme-neon");
+});
+
+layoutToggle.addEventListener("click", () => {
+  document.body.classList.toggle("layout-minimal");
+  
+  setTimeout(() => {
+    updateSlotWidths();
+  }, 105);h
 });
 
 renderSlots(getCountFromDiv(inCountInput), getCountFromDiv(postCountInput));

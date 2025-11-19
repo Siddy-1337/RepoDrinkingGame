@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>RepoDrinkingGame</title>
   <link rel="stylesheet" href="style.css" />
 </head>
@@ -26,20 +26,24 @@
       </label>
     </section>
 
+    <section class="toggles">
+      <button id="theme_toggle">Toggle Theme</button>
+      <button id="layout_toggle">Toggle Layout</button>
+    </section>
+
     <section class="section">
       <h2>In-Match Triggers</h2>
       <div class="slots" id="in_slots"></div>
     </section>
 
     <section class="section">
-      <h2>Post-Match Trigger</h2>
+      <h2>Post-Match Triggers</h2>
       <div class="slots" id="post_slots"></div>
     </section>
 
     <button id="spin">Spin</button>
   </div>
 
-  <!-- Firebase + JS -->
   <script type="module" src="script.js"></script>
 </body>
 </html>
