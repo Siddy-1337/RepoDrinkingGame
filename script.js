@@ -16,28 +16,33 @@ const db = getDatabase(app);
 const gameRef = ref(db, "currentSpin");
 
 const inMatchRules = [
-  "Revive a player – LA",
-  "Break an item – LA",
-  "Damage an item – WA",
-  "Hit a player – LA",
-  "Die – HA",
-  "Say something mean – LA",
-  "Kill a player – HA",
-  "Tip over animal box – HA",
-  "Break an orb – HA",
-  "Call each other by the wrong name – LA",
-  "Light items can only be carried by one person - HA",
-  "Knock a player with the cart - LA",
-  "Any explosion - HA",
-  "Slide - LA",
-  "Jump - LA"
+"Revive a dead player - LA",
+"Break an item - LA",
+"Damage an item - LA",
+"Hit a player - LA",
+"Die - HA",
+"Say something mean - LA",
+"Kill a player - HA",
+"Tip over an animal box - HA",
+"Break an orb - HA",
+"Call each other the wrong name - LA",
+"Light items can only be carried by one person - HA",
+"Knock a player with the cart - LA",
+"Cause an explosion - HA",
+"Slide - LA",
+"Jump - LA",
+"Swear - LA",
+"Receive fall damage - LA",
+"Hurt a player - LA",
+"Call chat 'chat' - LA",
 ];
 
 const endMatchRules = [
-  "Complete a level without killing a monster – LA",
-  "Complete a level while having been revived – HA",
-  "Complete a level without everyone alive – HA",
-  "For each item (knowingly) left behind – HA"
+"Complete a level without killing a monster - LA",
+"Complete a level while having been revived  - HA",
+"Complete a level having revived a player - HA",
+"Complete a level without everyone alive - HA",
+"For each item (knowingly) left behind - HA",
 ];
 
 const inCountInput = document.getElementById("in_game_triggers");

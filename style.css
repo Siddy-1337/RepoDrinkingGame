@@ -1,30 +1,23 @@
 :root {
   --bg-color: #faf7f5;
-  --container-bg: #ffffff;
-  --container-shadow: rgba(0,0,0,0.05);
+  --container-bg: linear-gradient(135deg, #ffffff, #f5f0ff);
+  --container-shadow: rgba(0,0,0,0.08);
   --title-color: #3c3a3a;
   --subtitle-color: #555;
-  --button-bg: #f3f0ee;
-  --button-hover-bg: #ece7e4;
-  --button-border: #d7d3d0;
+  --button-bg: #f7e9ff;
+  --button-hover-bg: #ecd7ff;
+  --button-border: #d7c0ff;
   --button-color: #444;
-  --slot-bg: #fafafa;
-  --slot-border: #ebe7e4;
-  --slot-spin-bg: #f2edf9;
-  --slot-spin-border: #d8c9f0;
-  --slot-shadow: rgba(180,150,240,0.2);
+  --slot-bg: #fff1ff;
+  --slot-border: #e0c8ff;
+  --slot-spin-bg: #e9d7ff;
+  --slot-spin-border: #d8b7ff;
+  --slot-shadow: rgba(180,150,240,0.25);
   --spin-button-bg: linear-gradient(135deg, #dceeff, #e9f5ff);
   --spin-button-border: #d1e4f5;
   --spin-button-color: #335;
-  --spin-button-shadow: rgba(100,150,255,0.15);
-  --spin-button-shadow-hover: rgba(100,150,255,0.25);
-}
-
-
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+  --spin-button-shadow: rgba(100,150,255,0.25);
+  --spin-button-shadow-hover: rgba(100,150,255,0.35);
 }
 
 body {
@@ -35,8 +28,8 @@ body {
   min-height: 100vh;
   display: flex;
   justify-content: center;
-  align-items: flex-start; /* align to top but allow padding */
-  padding: 4rem 2rem; /* more breathing room */
+  align-items: flex-start;
+  padding: 4rem 2rem;
 }
 
 .container {
@@ -45,28 +38,28 @@ body {
   padding: 2.5rem;
   border-radius: 18px;
   background: var(--container-bg);
-  box-shadow:
-    0 2px 6px var(--container-shadow),
-    0 8px 20px var(--container-shadow);
+  box-shadow: 0 6px 20px var(--container-shadow);
   border: 1px solid #ebe7e4;
   display: flex;
   flex-direction: column;
   align-items: center;
-  max-height: fit-content; /* prevents stretching */
+  max-height: fit-content;
+  transition: background 0.4s ease;
 }
 
-
 h1 {
-  font-size: 2.3rem;
+  font-size: 2.4rem;
   margin-bottom: 1.5rem;
   font-weight: 700;
   color: var(--title-color);
+  text-shadow: 0 0 5px #d7b7ff;
 }
 
 .section h2 {
-  font-size: 1.4rem;
+  font-size: 1.45rem;
   color: var(--subtitle-color);
-  margin-bottom: 0.8rem;
+  margin-bottom: 1rem;
+  text-shadow: 0 0 3px rgba(0,0,0,0.05);
 }
 
 .settings {
@@ -82,24 +75,25 @@ h1 {
   align-items: center;
   justify-content: center;
   gap: 0.8rem;
-  font-size: 1.2rem;
+  font-size: 1.25rem;
   color: var(--subtitle-color);
 }
 
 .settings-label button {
-  width: 34px;
-  height: 34px;
-  border-radius: 8px;
+  width: 36px;
+  height: 36px;
+  border-radius: 12px;
   border: 1px solid var(--button-border);
   background: var(--button-bg);
   color: var(--button-color);
-  font-size: 1.2rem;
+  font-size: 1.25rem;
   cursor: pointer;
-  transition: 0.2s;
+  transition: 0.2s all;
 }
 
 .settings-label button:hover:not(:disabled) {
   background: var(--button-hover-bg);
+  transform: scale(1.1);
 }
 
 .settings-label button:disabled {
@@ -107,13 +101,14 @@ h1 {
 }
 
 .settings-label div {
-  width: 44px;
-  font-size: 1.25rem;
+  width: 46px;
+  font-size: 1.3rem;
   font-weight: bold;
-  background: #f8f6f4;
+  background: #f8f0ff;
   padding: 6px 0;
-  border-radius: 6px;
-  border: 1px solid #e5e2df;
+  border-radius: 8px;
+  border: 1px solid #e5d4ff;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.08);
 }
 
 .slots {
@@ -122,23 +117,22 @@ h1 {
   gap: 1rem;
   align-items: center;
   width: 100%;
-  padding-bottom: 1.5rem; /* adds space after the last slot */
+  padding-bottom: 2rem;
 }
-
 
 .slot {
   width: var(--slot-width, 480px);
   height: var(--slot-height, 56px);
   background: var(--slot-bg);
-  border-radius: 12px;
+  border-radius: 14px;
   border: 2px solid var(--slot-border);
   display: flex;
   justify-content: center;
   align-items: center;
   font-size: 1rem;
   padding: 0 14px;
-  box-shadow: 0 1px 2px var(--slot-shadow), 0 2px 5px var(--slot-shadow);
-  transition: transform 0.4s ease, background 0.4s ease, border-color 0.4s ease, opacity 0.35s ease;
+  box-shadow: 0 4px 10px var(--slot-shadow), 0 6px 15px var(--slot-shadow);
+  transition: transform 0.35s ease, background 0.35s ease, border-color 0.35s ease, opacity 0.35s ease;
   will-change: transform, opacity;
   opacity: 1;
 }
@@ -147,33 +141,27 @@ h1 {
   background: var(--slot-spin-bg);
   border-color: var(--slot-spin-border);
   transform: scale(1.05);
-}
-
-.slot.reveal {
-  opacity: 1;
-}
-
-.slot.hidden {
-  opacity: 0;
+  box-shadow: 0 6px 12px var(--slot-shadow), 0 10px 18px var(--slot-shadow);
 }
 
 #spin {
   margin-top: 1.5rem;
   padding: 1rem 2.5rem;
-  font-size: 1.3rem;
+  font-size: 1.35rem;
   font-weight: 600;
-  border-radius: 12px;
+  border-radius: 16px;
   border: 1px solid var(--spin-button-border);
   background: var(--spin-button-bg);
   color: var(--spin-button-color);
   cursor: pointer;
-  transition: transform 0.25s, box-shadow 0.25s;
-  box-shadow: 0 3px 8px var(--spin-button-shadow), 0 8px 16px var(--spin-button-shadow);
+  transition: transform 0.25s, box-shadow 0.25s, background 0.25s;
+  box-shadow: 0 4px 10px var(--spin-button-shadow), 0 8px 18px var(--spin-button-shadow);
 }
 
 #spin:hover {
   transform: scale(1.05);
-  box-shadow: 0 5px 12px var(--spin-button-shadow-hover), 0 10px 20px var(--spin-button-shadow-hover);
+  box-shadow: 0 6px 14px var(--spin-button-shadow-hover), 0 12px 22px var(--spin-button-shadow-hover);
+  background: linear-gradient(135deg, #e0f0ff, #f0e0ff);
 }
 
 #spin:active {
@@ -186,3 +174,4 @@ h1 {
   cursor: default;
   box-shadow: none;
 }
+
