@@ -1,25 +1,24 @@
 :root {
-  --bg-color: #fffaf5;
-  --container-bg: linear-gradient(135deg, #ffffff, #fef5e8);
-  --container-shadow: rgba(255, 180, 120, 0.15);
-  --title-color: #4a4a48;
-  --subtitle-color: #667066;
-  --button-bg: #d0fff0;
-  --button-hover-bg: #aaf3df;
-  --button-border: #7ee6c8;
-  --button-color: #2a3d34;
-  --slot-bg: #e6fff7;
-  --slot-border: #aef0dc;
-  --slot-spin-bg: #c0ffe6;
-  --slot-spin-border: #7ee6c8;
-  --slot-shadow: rgba(100, 200, 180, 0.3);
-  --spin-button-bg: linear-gradient(135deg, #aaf3df, #c0ffe6);
-  --spin-button-border: #7ee6c8;
-  --spin-button-color: #1a3d2d;
-  --spin-button-shadow: rgba(100, 200, 180, 0.35);
-  --spin-button-shadow-hover: rgba(100, 200, 180, 0.5);
+  --bg-color: #fff8f0;
+  --container-bg: linear-gradient(135deg, #ffffff, #fff1e0);
+  --container-shadow: rgba(0,0,0,0);
+  --title-color: #4a3d33;
+  --subtitle-color: #66594f;
+  --button-bg: #ffd19c;
+  --button-hover-bg: #ffc17a;
+  --button-border: #ffb65a;
+  --button-color: #4a2e1a;
+  --slot-bg: #ffe0b3;
+  --slot-border: #ffb347;
+  --slot-spin-bg: #ffd07a;
+  --slot-spin-border: #ff9933;
+  --slot-shadow: rgba(0,0,0,0);
+  --spin-button-bg: linear-gradient(135deg, #ffc17a, #ffd19c);
+  --spin-button-border: #ffb65a;
+  --spin-button-color: #4a2e1a;
+  --spin-button-shadow: rgba(0,0,0,0);
+  --spin-button-shadow-hover: rgba(0,0,0,0);
 }
-
 
 body {
   font-family: "Montserrat", "Arial", sans-serif;
@@ -53,7 +52,6 @@ h1 {
   margin-bottom: 1.5rem;
   font-weight: 700;
   color: var(--title-color);
-  text-shadow: 0 0 8px var(--slot-border);
 }
 
 .section h2 {
@@ -281,7 +279,7 @@ h1 {
 
 
 .layout-minimal .slots .slot {
-  font-size: 0.95rem;
+  font-size: 0.99rem;
   height: 40px;
   padding: 0 10px;
   margin-bottom: 4px;
